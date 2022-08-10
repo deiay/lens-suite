@@ -10,7 +10,7 @@ import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "~lib/apollo";
 
 const PROFILE_CONFIG: ProfileConfig = {
-  requiredFields: ["email", "name", "phoneNumber"],
+  requiredFields: ["bio", "name"],
 };
 
 function MyApp({ Component, pageProps }: AppProps) {

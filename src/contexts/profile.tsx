@@ -69,8 +69,6 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
 
   const onBoardingComplete = !incompleteFields.length;
 
-  console.log({ incompleteFields });
-
   const values = {
     connectedAddress,
     createProfile,
@@ -78,6 +76,8 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
     onBoardingComplete,
     creationLoading: loading,
   };
+
+  console.log({ profile });
 
   return (
     <ProfileContext.Provider value={values}>
@@ -87,6 +87,7 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
         }
         onClose={closeOnboardinModal}
         incompleteFields={incompleteFields}
+        setProfile={setProfile}
       />
       {children}
     </ProfileContext.Provider>
