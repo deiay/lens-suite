@@ -56,9 +56,11 @@ export const Modal = ({
       ariaHideApp={false}
       onRequestClose={allowClose ? onClose : () => {}}
     >
-      <ModalContent stacked="column" justify="center">
+      <ModalContent stacked="column">
         <ModalHeader allowClose={allowClose} title={title} onClose={onClose} />
-        {children}
+        <Box stacked="column" spacing="mt4" grow={1}>
+          {children}
+        </Box>
       </ModalContent>
     </_Modal>
   );

@@ -75,19 +75,21 @@ export const OnboardingModal = ({
   }
 
   return (
-    <Modal open={open} onClose={onClose} allowClose={false}>
-      {!profile && <CreateProfileForm />}
-      {profile && nextField && (
-        <FieldForm
-          fieldDefinition={nextField}
-          onUpdate={addUpdates(nextField.lensKey)}
-        />
-      )}
-      {error && (
-        <Box stacked="row" justify="center">
-          <Text fontColor="red">{error}</Text>
-        </Box>
-      )}
+    <Modal open={open} onClose={onClose}>
+      <Box stacked="column">
+        {!profile && <CreateProfileForm />}
+        {profile && nextField && (
+          <FieldForm
+            fieldDefinition={nextField}
+            onUpdate={addUpdates(nextField.lensKey)}
+          />
+        )}
+        {error && (
+          <Box stacked="row" justify="center">
+            <Text fontColor="red">{error}</Text>
+          </Box>
+        )}
+      </Box>
     </Modal>
   );
 };

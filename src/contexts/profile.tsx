@@ -6,6 +6,7 @@ import { OnboardingModal } from "~views/OnboardingModal";
 import { useModal } from "~hooks/useModal";
 import { FieldDefinition, FieldType, Profile } from "~types/standard";
 import _ from "lodash";
+import { useDisconnect } from "wagmi";
 
 // interface ProfileContextInterface {
 //   connectedAddress: string;
@@ -51,6 +52,7 @@ export const USER_FIELDS = {
 export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
   const [profile, setProfile] = useState<Profile>();
   const { connectedAddress } = useAuth({ setProfile });
+  const { disconnect } = useDisconnect();
   const {
     showModal: onboardingModalOpen,
     onModalClose: closeOnboardinModal,
@@ -83,7 +85,10 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
         open={
           !!connectedAddress && (onboardingModalOpen || !onBoardingComplete)
         }
-        onClose={closeOnboardinModal}
+        onClose={() => {
+          closeOnboardinModal();
+          disconnect();
+        }}
         incompleteFields={incompleteFields}
         setProfile={setProfile}
         error={error}
