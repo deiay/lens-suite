@@ -1,8 +1,9 @@
-import { createContext, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { UseAccountConfig } from "wagmi/dist/declarations/src/hooks/accounts/useAccount";
+import { createContext, useContext } from "react";
 import { ContainerProps } from "~components/mixins";
-import { useAuth } from "src/hooks/useAuth";
+import { useAuth } from "~hooks/useAuth";
+import { useRetrieveProfile } from "~hooks/useRetrieveProfile";
+import { OnboardingModal } from "~views/OnboardingModal";
+import { useModal } from "~hooks/useModal";
 
 interface ProfileContextInterface {}
 
@@ -17,25 +18,40 @@ interface ProfileProviderProps extends ContainerProps {
 const ProfileContext = createContext<any>(null);
 
 export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
-  const { authAddress } = useAuth();
+  const { connectedAddress } = useAuth();
+  const {
+    showModal: onboardingModalOpen,
+    onModalClose: closeOnboardinModal,
+    onModalOpen: openOnboardingModal,
+  } = useModal();
 
-  const onConnect: UseAccountConfig["onConnect"] = async ({
-    address: _address,
-  }) => {
-    if (_address) {
-      await authAddress(_address);
-    }
+  const { profile, createProfile, loading } = useRetrieveProfile({
+    connectedAddress,
+    onOnboardingRequired: openOnboardingModal,
+  });
+
+  const values = {
+    connectedAddress,
+    createProfile,
+    profile,
+    creationLoading: loading,
   };
 
-  const { isConnected, address } = useAccount({ onConnect });
-
-  useEffect(() => {
-    if (address) {
-    }
-  }, [address]);
-
-  const values = {};
   return (
-    <ProfileContext.Provider value={values}>{children}</ProfileContext.Provider>
+    <ProfileContext.Provider value={values}>
+      <OnboardingModal
+        open={onboardingModalOpen}
+        onClose={closeOnboardinModal}
+      />
+      {children}
+    </ProfileContext.Provider>
   );
+};
+
+export const useProfile = () => {
+  const context = useContext(ProfileContext);
+  if (context === undefined) {
+    throw new Error("useProfile must be used within a ProfileProvider");
+  }
+  return context;
 };

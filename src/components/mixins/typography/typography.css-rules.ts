@@ -3,7 +3,7 @@ import { FONT_SIZES } from './../../../themes/font-size'
 import { TypographyProps } from './typography.proptypes'
 
 export const getFontWeightRule = ({ bold = false }: TypographyProps) =>
-	`font-weight: ${bold ? '700' : '400'};}`
+	`font-weight: ${bold ? '800' : '400'};}`
 
 export const getFontSizeRule = ({ fontSize }: TypographyProps) =>
 	`font-size: ${
@@ -22,6 +22,7 @@ export const getFontColorRule = ({ fontColor }: TypographyProps) => `
 `
 
 export const getTypographyRules = (props: TypographyProps) => `
+	font-family: SFRounded, ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	white-space: pre-wrap;
 	${getFontWeightRule(props)}
 	${getFontSizeRule(props)}

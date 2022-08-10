@@ -1,0 +1,11 @@
+mutation CreateProfile($input: CreateProfileRequest!) {
+  createProfile(request: $input) {
+    ... on RelayerResult {
+      txHash
+    }
+    ... on RelayError {
+      reason
+    }
+    __typename
+  }
+}

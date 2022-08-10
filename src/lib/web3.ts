@@ -16,10 +16,12 @@ const { provider, chains, webSocketProvider } = configureChains(
     ]
 )
 
-const { connectors } = getDefaultWallets({
-appName: 'My RainbowKit App',
-  chains
-});
+
+export const { connectors, wallets } = getDefaultWallets({
+  appName: 'My RainbowKit App',
+    chains
+  });
+
 
 
 

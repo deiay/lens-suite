@@ -7,11 +7,13 @@ export type Color =
 	| 'greyscale-light'
 	| 'brand-primary-fg'
 	| 'brand-primary-bg'
+	| 'black'
 
 export const COLOR_PALLETE: Record<Color, string> = {
 	// Backgrounds
 	white: '#ffffff',
 	background: '#f9f8f7',
+	black: '#25292E',
 
 	// Greys
 	'greyscale-black': '#403e3d',

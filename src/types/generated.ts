@@ -726,6 +726,20 @@ export type AuthenticateChallengeVariables = Exact<{
 
 export type AuthenticateChallenge = { authenticate: { accessToken: string, refreshToken: string } };
 
+export type CreateProfileVariables = Exact<{
+  input: CreateProfileRequest;
+}>;
+
+
+export type CreateProfile = { createProfile: { __typename: 'RelayError', reason: RelayErrorReasons } | { __typename: 'RelayerResult', txHash: string } };
+
+export type FetchProfileVariables = Exact<{
+  address: Scalars['EthereumAddress'];
+}>;
+
+
+export type FetchProfile = { defaultProfile?: { id: string, name?: string | undefined, bio?: string | undefined, isDefault: boolean, followNftAddress?: string | undefined, metadata?: string | undefined, handle: string, ownedBy: string, attributes?: Array<{ displayType?: string | undefined, traitType?: string | undefined, key: string, value: string }> | undefined, picture?: { original: { url: string, mimeType?: string | undefined } } | { contractAddress: string, tokenId: string, uri: string, chainId: number, verified: boolean } | undefined, coverPicture?: { original: { url: string, mimeType?: string | undefined } } | { contractAddress: string, tokenId: string, uri: string, chainId: number, verified: boolean } | undefined, dispatcher?: { address: string, canUseRelay: boolean } | undefined, stats: { totalFollowers: number, totalFollowing: number, totalPosts: number, totalComments: number, totalMirrors: number, totalPublications: number, totalCollects: number }, followModule?: { type: FollowModules, contractAddress: string, recipient: string, amount: { value: string, asset: { name: string, symbol: string, decimals: number, address: string } } } | { type: FollowModules } | { type: FollowModules } | undefined } | undefined };
+
 export type GetChallengeVariables = Exact<{
   address: Scalars['EthereumAddress'];
 }>;
