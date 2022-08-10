@@ -7,6 +7,14 @@ Hosted at: https://lens-suite.vercel.app/
 - Quickly setup an on chain user management system with a few lines of code
 - Specify the fields that your application needs to function, and these fields will automatically be retrieved from the users Lens profile if present, or otherwise requested from the user and then written to their Lens profile
 
+### Main Exports
+
+There are two main exports from this hack:
+
+`ProfileProdiver`: A react context that handles lens auth, user metadata retrieval and updates
+
+`useProfile`: A react hook for consuming user metadata from lens
+
 ### Setup
 
 1. Specify the fields needed for an application
