@@ -1,34 +1,63 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A react library built to empower web3 developers to onboard users and manage user data completely on chain.
 
-## Getting Started
+Hosted at: https://lens-suite.vercel.app/
+
+### Features
+
+- Quickly setup an on chain user management system with a few lines of code
+- Specify the fields that your application needs to function, and these fields will automatically be retrieved from the users Lens profile if present, or otherwise requested from the user and then written to their Lens profile
+
+### Setup
+
+1. Specify the fields needed for an application
+
+```typescript
+const PROFILE_CONFIG: ProfileConfig = {
+  requiredFields: ["bio", "name"],
+};
+```
+
+2. Hook up `wagmi`, `rainbowkit`, and `profile` providers
+
+```
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
+          <ProfileProvider config={PROFILE_CONFIG}>
+            <Header />
+            <Component {...pageProps} />
+          </ProfileProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
+}
+
+export default MyApp;
+```
+
+3. Access profile data
+
+```
+const MyComponent = () => {
+  const { profile } = useProfile()
+
+  return <ProfileCard name={profile.name} {...profile} />
+}
+```
+
+### Implementation Details
+
+1. When a user connects their wallet, the `ProfileProvider` queries lens for a profile associated with the user address
+2. a) If a profile exists, and it includes all the metadata necessary for the application, the provider will render the resulting app, with the user profile data in context
+3. b) If a profile exists, but it is missing some of the metadata necessary for the application, the provider will render a modal asking the user for the remaining information. It will then write that information to their lens profile
+4. c) If a profile doesn't exist, it will prompt the user to enter a handle. It will create a new lens profile for the user with the handle provided
+5. This process is run every time a user connects, so it's easy to require additional fields in the future
+
+## Development
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
 yarn dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
