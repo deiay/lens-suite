@@ -32,7 +32,10 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
 
     const {
       isLoading: transactionProcessing,
-     } = useWaitForTransaction({hash: txHash, onSuccess: async () => {
+     } = useWaitForTransaction({hash: txHash, onError: (error) => {
+      console.log('Error creating profile', {error})
+     }, onSuccess: async (receipt) => {
+      console.log('Successfully created profile', {receipt})
       await fetchProfile();
     }});
 
@@ -55,6 +58,7 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
       setProfile(undefined)
       return 
     }
+    console.log('fetching profile')
     const { data } = await _fetchProfile({
         variables: { address: connectedAddress },
     });
