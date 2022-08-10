@@ -18,10 +18,10 @@ interface UseRetrieveProfile {
 }
 
 export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setProfile}: UseRetrieveProfile) => {
-    const [_fetchProfile, { data, loading: fetchProfileLoading }] = useLazyQuery<
+    const [_fetchProfile, { loading: fetchProfileLoading }] = useLazyQuery<
     FetchProfileQuery,
     FetchProfileQueryVariables
-  >(fetchProfileQuery);
+  >(fetchProfileQuery, { fetchPolicy: "no-cache" });
 
     const [_createProfile, {loading: createProfileLoading}] = useMutation<
     CreateProfileQuery,
