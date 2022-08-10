@@ -10,7 +10,7 @@ import {
     AuthenticateChallenge as AuthenticateChallengeQuery,
     AuthenticateChallengeVariables as AuthenticateChallengeQueryVariables
 } from '~types/generated';
-import { useAccount, useSignMessage } from 'wagmi';
+import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { Profile } from '~types/standard';
 
@@ -29,6 +29,7 @@ export const useAuth = ({setProfile}: UseAuthProps) => {
     const [authenticateChallenge] = useMutation<AuthenticateChallengeQuery,AuthenticateChallengeQueryVariables>(authenticateChallengeQuery, {fetchPolicy: 'no-cache'});
     const [isConnected, setConnected] = useState(getCookie(AUTH_COOKIE_LABELS.LENS_JWT) !== undefined);
     const [connectedAddress, setConnectedAddress] = useState<string>()
+    const { disconnect } = useDisconnect()
     
 
     const { signMessageAsync } = useSignMessage();
@@ -68,6 +69,7 @@ export const useAuth = ({setProfile}: UseAuthProps) => {
             } else {
                 console.error({ error })
             }
+            disconnect()
         }                
     }
 
