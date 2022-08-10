@@ -10,6 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
 import { Profile } from "~types/standard";
+import { setDefaultResultOrder } from "dns";
 
 interface UseRetrieveProfile {
     connectedAddress?: string
@@ -29,6 +30,7 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
     >(createProfileQuery);
 
     const [txHash, setTxHash] = useState<string>()
+    const [error, setError] = useState<string>()
 
     const {
       isLoading: transactionProcessing,
@@ -41,19 +43,25 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
 
 
    const createProfile =  useCallback(async (handle: string) => {
+    setError(undefined)
     if (!connectedAddress) return 
     
     const { data } = await _createProfile({
         variables: { input: { handle }},
     });
 
-    if (data?.createProfile.__typename !== 'RelayerResult') throw 'Unable to fetch profile';
+    if (data?.createProfile.__typename !== 'RelayerResult') {
+      console.error('Error while fetching profile', {error: data?.createProfile.reason})
+      setError(data?.createProfile.reason)
+      throw 'Unable to fetch profile';
+    } 
 
     setTxHash(data.createProfile.txHash)
 
     },[connectedAddress, _createProfile])
 
   const fetchProfile = useCallback(async () => {
+    setError(undefined)
     if (!connectedAddress) {
       setProfile(undefined)
       return 
@@ -85,5 +93,5 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
     } 
   }, [connectedAddress, fetchProfile]);
 
-  return { createProfile, fetchProfile, loading }
+  return { createProfile, fetchProfile, loading, error }
 }

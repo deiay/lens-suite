@@ -57,7 +57,7 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
     onModalOpen: openOnboardingModal,
   } = useModal();
 
-  const { createProfile, loading } = useRetrieveProfile({
+  const { createProfile, loading, error } = useRetrieveProfile({
     connectedAddress,
     setProfile,
     onOnboardingRequired: openOnboardingModal,
@@ -77,8 +77,6 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
     creationLoading: loading,
   };
 
-  console.log({ profile });
-
   return (
     <ProfileContext.Provider value={values}>
       <OnboardingModal
@@ -88,6 +86,7 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
         onClose={closeOnboardinModal}
         incompleteFields={incompleteFields}
         setProfile={setProfile}
+        error={error}
       />
       {children}
     </ProfileContext.Provider>

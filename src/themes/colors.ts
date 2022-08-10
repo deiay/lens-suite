@@ -8,8 +8,9 @@ export type Color =
 	| 'brand-primary-fg'
 	| 'brand-primary-bg'
 	| 'black'
+	
 
-export const COLOR_PALLETE: Record<Color, string> = {
+export const COLOR_PALLETE: Record<string, string> = {
 	// Backgrounds
 	white: '#ffffff',
 	background: '#f9f8f7',

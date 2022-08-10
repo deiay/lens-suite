@@ -18,7 +18,7 @@ export const getTextAlignmentRule = ({ align }: TypographyProps) =>
 	`text-align: ${align};`
 
 export const getFontColorRule = ({ fontColor }: TypographyProps) => `
-	color: ${fontColor ? COLOR_PALLETE[fontColor] : 'inherit'};
+	color: ${fontColor ? COLOR_PALLETE[fontColor] || fontColor : 'inherit'};
 `
 
 export const getTypographyRules = (props: TypographyProps) => `

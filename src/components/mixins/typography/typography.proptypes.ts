@@ -6,5 +6,5 @@ export interface TypographyProps {
 	bold?: boolean
 	fontSize?: FontSizeKey | number
 	align?: Alignment
-	fontColor?: Color
+	fontColor?: Color | string
 }

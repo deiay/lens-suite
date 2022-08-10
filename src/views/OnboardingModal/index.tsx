@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 import { Modal } from "~components/layout/modal";
+import { Box } from "~components/primitives/Box";
+import { Text } from "~components/typography";
 import { useProfile } from "~contexts/profile";
 import { FieldDefinition, Profile } from "~types/standard";
 import { CreateProfileForm } from "~views/CreateProfileForm";
@@ -17,6 +19,7 @@ interface OnboardingModalProps {
   onClose: () => void;
   incompleteFields: FieldDefinition[];
   setProfile: Dispatch<SetStateAction<Profile | undefined>>;
+  error?: string;
 }
 
 export const OnboardingModal = ({
@@ -24,6 +27,7 @@ export const OnboardingModal = ({
   onClose,
   incompleteFields,
   setProfile,
+  error,
 }: OnboardingModalProps) => {
   const { profile } = useProfile();
   const [unsavedUpdates, setUnsavedUpdates] = useState<Array<[string, string]>>(
@@ -55,22 +59,16 @@ export const OnboardingModal = ({
   }, [unsavedUpdates, setProfile]);
 
   useEffect(() => {
+    console.log("checking if changes can be submitted");
     const fieldsCompleted = incompleteFields.every((field) =>
       unsavedUpdates.find((update) => update[0] === field.lensKey)
     );
 
-    console.log({
-      fieldsCompleted,
-      nextField,
-      incompleteFields,
-      unsavedUpdates,
-      profile,
-    });
-
-    if (fieldsCompleted) {
+    if (fieldsCompleted && unsavedUpdates.length) {
       submitForm();
+      setUnsavedUpdates([]);
     }
-  }, [nextField, submitForm, incompleteFields, unsavedUpdates]);
+  }, [nextField, submitForm, profile, incompleteFields, unsavedUpdates]);
 
   if (!nextField) {
     return null;
@@ -84,6 +82,11 @@ export const OnboardingModal = ({
           fieldDefinition={nextField}
           onUpdate={addUpdates(nextField.lensKey)}
         />
+      )}
+      {error && (
+        <Box stacked="row" justify="center">
+          <Text fontColor="red">{error}</Text>
+        </Box>
       )}
     </Modal>
   );
