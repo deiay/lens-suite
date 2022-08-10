@@ -9,13 +9,15 @@ import {
 } from "~types/generated";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
+import { Profile } from "~types/standard";
 
 interface UseRetrieveProfile {
     connectedAddress?: string
     onOnboardingRequired: () => void
+    setProfile: (profile?: Profile) => void
 }
 
-export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired}: UseRetrieveProfile) => {
+export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setProfile}: UseRetrieveProfile) => {
     const [_fetchProfile, { data, loading: fetchProfileLoading }] = useLazyQuery<
     FetchProfileQuery,
     FetchProfileQueryVariables
@@ -28,7 +30,12 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired}: Use
 
     const [txHash, setTxHash] = useState<string>()
 
-    const { isLoading: transactionProcessing } = useWaitForTransaction({hash: txHash});
+    const {
+      isLoading: transactionProcessing,
+     } = useWaitForTransaction({hash: txHash, onSuccess: (receipt) => {
+      fetchProfile
+    }});
+
 
    const createProfile =  useCallback(async (handle: string) => {
     if (!connectedAddress) return 
@@ -44,20 +51,23 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired}: Use
     },[connectedAddress, _createProfile])
 
   const fetchProfile = useCallback(async () => {
-    if (!connectedAddress) return 
+    if (!connectedAddress) {
+      setProfile(undefined)
+      return 
+    }
     const { data } = await _fetchProfile({
         variables: { address: connectedAddress },
     });
     if (!data) throw 'Unable to fetch profile';
 
-    if (!data.defaultProfile) {
+    if (!data?.profiles?.items?.length) {
+      setProfile(undefined)
       onOnboardingRequired()        
+    } else {
+      setProfile(data?.profiles?.items[0])
     }
 
-    },[connectedAddress, _fetchProfile, onOnboardingRequired])
-
-
-  const profile = useMemo(() => data?.defaultProfile, [data])
+    },[connectedAddress, _fetchProfile, onOnboardingRequired, setProfile])
 
   const loading = useMemo(() => fetchProfileLoading || createProfileLoading || transactionProcessing, [
     fetchProfileLoading,
@@ -68,8 +78,8 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired}: Use
   useEffect(() => {
     if (connectedAddress) {
         fetchProfile()      
-    }
+    } 
   }, [connectedAddress, fetchProfile]);
 
-  return { profile, createProfile, loading }
+  return { createProfile, fetchProfile, loading }
 }

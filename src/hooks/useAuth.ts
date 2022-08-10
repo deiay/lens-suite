@@ -1,3 +1,4 @@
+import { apolloClient } from '~lib/apollo';
 import { UseAccountConfig } from 'wagmi/dist/declarations/src/hooks/accounts/useAccount';
 import { useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
@@ -11,6 +12,7 @@ import {
 } from '~types/generated';
 import { useAccount, useSignMessage } from 'wagmi';
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { Profile } from '~types/standard';
 
 
 export const AUTH_COOKIE_LABELS = {
@@ -18,11 +20,16 @@ export const AUTH_COOKIE_LABELS = {
     LENS_JWT_REFRESH: 'X-LENS-ACL-REFRESH',
 }
 
-export const useAuth = () => {
+interface UseAuthProps {
+    setProfile: (profile?: Profile) => void
+}
+
+export const useAuth = ({setProfile}: UseAuthProps) => {
     const [getChallenge] = useLazyQuery<GetChallengeQuery,GetChallengeQueryVariables>(getChallengeQuery, {fetchPolicy: 'no-cache'});
     const [authenticateChallenge] = useMutation<AuthenticateChallengeQuery,AuthenticateChallengeQueryVariables>(authenticateChallengeQuery, {fetchPolicy: 'no-cache'});
     const [isConnected, setConnected] = useState(getCookie(AUTH_COOKIE_LABELS.LENS_JWT) !== undefined);
     const [connectedAddress, setConnectedAddress] = useState<string>()
+    
 
     const { signMessageAsync } = useSignMessage();
 
@@ -67,17 +74,25 @@ export const useAuth = () => {
     const onConnect: UseAccountConfig["onConnect"] = async ({
         address,
       }) => {
-
-        if (address && getCookie(AUTH_COOKIE_LABELS.LENS_JWT, {domain: process.env.NEXT_PUBLIC_LENS_API_URL}) === undefined) {
-          await authAddress(address);
+        const token = getCookie(AUTH_COOKIE_LABELS.LENS_JWT) !== undefined
+        if (address) {
+            if (token) {
+                setConnectedAddress(address)
+                setConnected(true)
+            } else {                
+                await authAddress(address);
+            }
         }
       };
     
 
     const onDisconnect: UseAccountConfig["onDisconnect"] = async () => {
-        setConnectedAddress(undefined)
-        clearAuthTokens();
+        setConnectedAddress(undefined);
+        clearAuthTokens();        
+        await apolloClient.clearStore();      
+        setProfile(undefined);
     };
+
     
     useAccount({ onConnect, onDisconnect });
     

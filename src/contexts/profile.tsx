@@ -1,9 +1,10 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { ContainerProps } from "~components/mixins";
 import { useAuth } from "~hooks/useAuth";
 import { useRetrieveProfile } from "~hooks/useRetrieveProfile";
 import { OnboardingModal } from "~views/OnboardingModal";
 import { useModal } from "~hooks/useModal";
+import { Profile } from "~types/standard";
 
 interface ProfileContextInterface {}
 
@@ -18,22 +19,27 @@ interface ProfileProviderProps extends ContainerProps {
 const ProfileContext = createContext<any>(null);
 
 export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
-  const { connectedAddress } = useAuth();
+  const [profile, setProfile] = useState<Profile>();
+  const { connectedAddress } = useAuth({ setProfile });
   const {
     showModal: onboardingModalOpen,
     onModalClose: closeOnboardinModal,
     onModalOpen: openOnboardingModal,
   } = useModal();
 
-  const { profile, createProfile, loading } = useRetrieveProfile({
+  const { createProfile, loading } = useRetrieveProfile({
     connectedAddress,
+    setProfile,
     onOnboardingRequired: openOnboardingModal,
   });
+
+  const onBoardingComplete = !!profile;
 
   const values = {
     connectedAddress,
     createProfile,
     profile,
+    onBoardingComplete,
     creationLoading: loading,
   };
 
