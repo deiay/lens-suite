@@ -9,4 +9,5 @@ export const Box = styled.div<BoxProps>`
   ${getStackeeRules}
 	${getSpacingRules}
 	${({ overflow }) => overflow && `overflow: ${overflow};`}
+	${({ gap }) => gap && `gap: ${gap};`}
 `;

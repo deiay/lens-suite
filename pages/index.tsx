@@ -11,12 +11,10 @@ const Home: NextPage = () => {
   const { profile, onBoardingComplete } = useProfile();
   return (
     <PageLayout stacked="column" justify="center" align="center">
-      <Box>
-        <Box spacing="mb4">
-          <ConnectButton showBalance={false} />
-        </Box>
-        {onBoardingComplete && <ProfileCard profile={profile} />}
+      <Box spacing="mb4">
+        <ConnectButton showBalance={false} />
       </Box>
+      {onBoardingComplete && <ProfileCard profile={profile} />}
     </PageLayout>
   );
 };

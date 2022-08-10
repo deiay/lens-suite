@@ -1,4 +1,8 @@
 {
   "presets": ["next/babel"],
-  "plugins": ["import-graphql", "@vanilla-extract/babel-plugin"]
+  "plugins": [
+    "import-graphql",
+    "styled-components",
+    "@vanilla-extract/babel-plugin"
+  ]
 }

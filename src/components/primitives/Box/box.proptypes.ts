@@ -10,4 +10,5 @@ export interface BoxProps
 		SpaceProps {
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	overflow?: 'visible' | 'hidden' | 'scroll' | 'auto'
+	gap?: string
 }

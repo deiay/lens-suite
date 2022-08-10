@@ -9,7 +9,7 @@ import {
 
 interface InputProps extends StackeeProps, SpaceProps {
   value?: string;
-  onChange: (a: string | undefined) => void;
+  onChange: (a: string) => void;
 }
 
 export const Input = ({ value, onChange }: InputProps) => {

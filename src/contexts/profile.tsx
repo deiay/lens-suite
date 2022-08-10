@@ -4,12 +4,19 @@ import { useAuth } from "~hooks/useAuth";
 import { useRetrieveProfile } from "~hooks/useRetrieveProfile";
 import { OnboardingModal } from "~views/OnboardingModal";
 import { useModal } from "~hooks/useModal";
-import { Profile } from "~types/standard";
+import { FieldDefinition, FieldType, Profile } from "~types/standard";
+import _ from "lodash";
 
-interface ProfileContextInterface {}
+// interface ProfileContextInterface {
+//   connectedAddress: string;
+//   createProfile;
+//   profile;
+//   onBoardingComplete;
+//   creationLoading: loading;
+// }
 
-interface ProfileConfig {
-  requiredFields: any[];
+export interface ProfileConfig {
+  requiredFields: FieldType[];
 }
 
 interface ProfileProviderProps extends ContainerProps {
@@ -17,6 +24,29 @@ interface ProfileProviderProps extends ContainerProps {
 }
 
 const ProfileContext = createContext<any>(null);
+
+export const USER_FIELDS = {
+  name: {
+    readableName: "Name",
+    lensKey: "name",
+  },
+  bio: {
+    readableName: "Bio",
+    lensKey: "bio",
+  },
+  email: {
+    readableName: "Email",
+    lensKey: "attributes.email",
+  },
+  phoneNumber: {
+    readableName: "Phone Number",
+    lensKey: "attributes.phone",
+  },
+  address: {
+    readableName: "Address",
+    lensKey: "attributes.address",
+  },
+};
 
 export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
   const [profile, setProfile] = useState<Profile>();
@@ -33,7 +63,13 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
     onOnboardingRequired: openOnboardingModal,
   });
 
-  const onBoardingComplete = !!profile;
+  const incompleteFields: FieldDefinition[] = config.requiredFields
+    .filter((field) => !_.get(profile, `${USER_FIELDS[field].lensKey}`))
+    .map((field) => USER_FIELDS[field]);
+
+  const onBoardingComplete = !incompleteFields.length;
+
+  console.log({ incompleteFields });
 
   const values = {
     connectedAddress,
@@ -46,8 +82,11 @@ export const ProfileProvider = ({ children, config }: ProfileProviderProps) => {
   return (
     <ProfileContext.Provider value={values}>
       <OnboardingModal
-        open={onboardingModalOpen}
+        open={
+          !!connectedAddress && (onboardingModalOpen || !onBoardingComplete)
+        }
         onClose={closeOnboardinModal}
+        incompleteFields={incompleteFields}
       />
       {children}
     </ProfileContext.Provider>

@@ -23,4 +23,5 @@ const StyledCard = styled(Box)`
   border-radius: 5px;
   max-width: 500px;
   background-color: #fff;
+  min-width: 400px;
 `;
