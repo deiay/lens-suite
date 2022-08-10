@@ -32,8 +32,8 @@ export const useRetrieveProfile = ({connectedAddress, onOnboardingRequired, setP
 
     const {
       isLoading: transactionProcessing,
-     } = useWaitForTransaction({hash: txHash, onSuccess: (receipt) => {
-      fetchProfile
+     } = useWaitForTransaction({hash: txHash, onSuccess: async () => {
+      await fetchProfile();
     }});
 
 
