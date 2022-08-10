@@ -56,8 +56,15 @@ const MyComponent = () => {
 
 ## Development
 
-First, run the development server:
+Create a file at the root level called `.env.local`. Add the following contents
+
+```
+NEXT_PUBLIC_LENS_API_URL=https://api-mumbai.lens.dev
+```
+
+Run the development server:
 
 ```bash
+yarn
 yarn dev
 ```
